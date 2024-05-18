@@ -37,7 +37,7 @@ export default function Modal({ raceWinner, setRaceWinner, setRaceResults }: Rac
           </div>
         </div>
         {raceWinner?.time !== undefined && raceWinner.time > 0 && (
-          <div>
+          <div className="mt-4 font-bold text-center">
             <p className="text-white">Car: {raceWinner?.carName}</p>
             <p className="text-white">Time: {raceWinner?.time} ms</p>
           </div>
