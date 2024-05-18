@@ -74,7 +74,8 @@ export function Car({
 
   useEffect(() => {
     moveCar();
-  }, [raceFlag]);
+     // eslint-disable-next-line
+  }, [ raceFlag]);
 
   return (
     <div className={"h-10 w-screen flex"}>
