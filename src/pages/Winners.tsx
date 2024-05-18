@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Nav } from "../components/Nav";
-import { ICar } from "./ICar";
 import { useSearchParams } from "react-router-dom";
 import Pagination from "../components/Pagination";
 
@@ -15,8 +14,6 @@ type WinnerDetails = { id: number; name: string; color: string; wins: number; ti
 export function Winners() {
   const [winners, setWinners] = useState<WinnerDetails[]>([]);
   const [queryParams, setQueryParams] = useSearchParams();
-  const [sortField, setSortField] = useState("");
-  const [sortDirection, setSortDirection] = useState("");
 
   const upChevron = (
     <svg
@@ -45,9 +42,7 @@ export function Winners() {
     </svg>
   );
 
-  let winnerDetails: WinnerDetails[] = [];
-
-  async function getWinners(limit: number = 10) {
+  const getWinners = useCallback(async (limit: number = 10) =>{
     const pageNum = queryParams.get("_page") ? queryParams.get("_page") : "1";
     const sort = queryParams.get("_sort") ? `&_sort=${queryParams.get("_sort")}` : ''
     const order = queryParams.get("_order") ? `&_order=${queryParams.get("_order")}` : ''
@@ -67,7 +62,7 @@ export function Winners() {
 
     const winnerDetails = await Promise.all(winnerPromises);
     setWinners(winnerDetails);
-  }
+  }, [queryParams])
 
   async function getCarNameAndColor(id: number) {
     const cars = await fetch(`http://localhost:3000/garage/${id}`);
@@ -151,11 +146,11 @@ export function Winners() {
       setQueryParams({ _page: "1" });
     }
     getWinners();
-  }, []);
+  }, [getWinners, setQueryParams, queryParams]);
 
   useEffect(() => {
     getWinners();
-  }, [queryParams]);
+  }, [queryParams, getWinners]);
 
   return (
     <div className="">

@@ -1,8 +1,3 @@
-import React, { useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
-import { ICar } from "../pages/ICar";
-import { Winner } from "../pages/Garage";
-
 type PageNum = {
   _page:string
 }

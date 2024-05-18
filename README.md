@@ -6,7 +6,7 @@
 
 ### WP/Telegram/Tel +374 96 742106
 
-## Calculated points 365 / 370
+## Calculated points 370 / 370
 
 #### View Configuration (30 points)
 
@@ -72,4 +72,4 @@
 
 - ✅Prettier Setup (5 points): Prettier is correctly set up with two scripts in package.json: format for auto-formatting and ci:format for checking issues.
 
-- ❌ESLint Configuration (5 points): ESLint is configured with the Airbnb style guide. A lint script in package.json runs ESLint checks. Configuration files should reflect strict TypeScript settings as per tsconfig.json.
+- ✅ESLint Configuration (5 points): ESLint is configured with the Airbnb style guide. A lint script in package.json runs ESLint checks. Configuration files should reflect strict TypeScript settings as per tsconfig.json.

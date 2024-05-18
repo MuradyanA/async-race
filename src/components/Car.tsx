@@ -1,13 +1,11 @@
-import { useEffect, useState } from "react";
-import { ICar } from "../pages/ICar";
-import { RaceResult } from "../pages/Garage";
+import { useCallback, useEffect, useState } from "react";
 import { CarProps } from "../pages/Garage";
 
 export function Car({ addResult, raceResults, setRaceResults, setUpdateFlag, setRaceFlag, setCar, raceFlag, data }: CarProps) {
   const [left, setLeft] = useState(0);
   const [duration, setDuration] = useState(0);
 
-  async function moveCar() {
+  const moveCar = useCallback(async () => {
     if (raceFlag < 0 || raceFlag === data.id) {
       let status = "started";
       const requestParams = {
@@ -46,7 +44,7 @@ export function Car({ addResult, raceResults, setRaceResults, setUpdateFlag, set
     if (raceFlag === 0) {
       setLeft(0);
     }
-  }
+  }, [addResult, data.id, raceFlag])
 
   async function removeCar(id: number){
      const resp = await fetch(`http://localhost:3000/garage/${id}`, {
@@ -57,7 +55,7 @@ export function Car({ addResult, raceResults, setRaceResults, setUpdateFlag, set
 
   useEffect(() => {
     moveCar();
-  }, [raceFlag]);
+  }, [raceFlag, moveCar]);
 
   return (
     <div className={"h-10 w-screen flex"}>

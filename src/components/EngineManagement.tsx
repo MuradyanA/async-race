@@ -1,4 +1,3 @@
-import { RaceResult } from "../pages/Garage";
 
 type SetRaceFlag = {
   setRaceFlag: (raceFlag: number) => void;

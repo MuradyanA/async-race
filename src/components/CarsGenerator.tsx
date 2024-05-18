@@ -1,6 +1,3 @@
-import React, { useState } from "react";
-import { ICar } from "../pages/ICar";
-
 interface CarProps {
   setUpdateFlag: (updateFlag: boolean) => void;
 }

@@ -35,18 +35,18 @@ export function Garage() {
   const [raceResults, setRaceResults] = useState<RaceResult[]>([]);
   const [raceWinner, setRaceWinner] = useState<Winner>();
   const [pageNumber, setPageNumber] = useSearchParams();
-  const [totalCarsNumber, setTotalCarsNumber] = useState(0)
+  const [totalCarsNumber, setTotalCarsNumber] = useState(0);
 
-  if(!pageNumber.get("_page")) setPageNumber({_page: "1"})
+  if (!pageNumber.get("_page")) setPageNumber({ _page: "1" });
 
   async function fetchData(url: string, page: number = 1, limit: number = 7) {
     try {
       const resp = await fetch(url + `?_page=${page}&_limit=${limit}`);
       if (!resp.ok) throw resp.statusText;
-      setTotalCarsNumber(Number(resp.headers.get("X-Total-Count")))
+      setTotalCarsNumber(Number(resp.headers.get("X-Total-Count")));
       const data = await resp.json();
       setCars(data);
-      setUpdateFlag(false)
+      setUpdateFlag(false);
     } catch (e) {
       console.error(e);
     }
@@ -73,7 +73,7 @@ export function Garage() {
           wins: 1,
           time: winner.time,
         });
-        const res = await fetch(`http://localhost:3000/winners`, {
+        await fetch(`http://localhost:3000/winners`, {
           method: "POST",
           headers: {
             "Content-type": "application/json; charset=UTF-8",
@@ -83,7 +83,7 @@ export function Garage() {
       } else {
         const winsCount = winnerData.wins + 1;
         const winTime = winner.time < winnerData.time ? winner.time : winnerData.time;
-        const res = await fetch(`http://localhost:3000/winners/${winner.id}`, {
+        await fetch(`http://localhost:3000/winners/${winner.id}`, {
           method: "PUT",
           body: JSON.stringify({
             wins: winsCount,
@@ -117,14 +117,16 @@ export function Garage() {
         setWinner(smallestTimeResult);
       }
     }
-  }, [raceResults]);
+  }, [raceResults, cars]);
 
   return (
     <div>
       <Nav />
       <div>
         <CarManagement car={car} setCar={setCar} setUpdateFlag={setUpdateFlag} />
-        <p className="ml-[1%] rounded-md text-white w-fit bg-gray-600 opacity-90 p-2 text-xl">Total Cars Count: {totalCarsNumber}</p>
+        <p className="ml-[1%] rounded-md text-white w-fit bg-gray-600 opacity-90 p-2 text-xl">
+          Total Cars Count: {totalCarsNumber}
+        </p>
         <div className="flex flex-rows items-center">
           <EngineManagement setRaceFlag={setRaceFlag} />
           <CarsGenerator setUpdateFlag={setUpdateFlag} />
@@ -166,7 +168,7 @@ export function Garage() {
           <div className="font-bold">FINISH</div>
         </div>
       </div>
-      {raceWinner && <Modal setRaceResults={ setRaceResults} setRaceWinner={setRaceWinner} raceWinner={raceWinner} />}
+      {raceWinner && <Modal setRaceResults={setRaceResults} setRaceWinner={setRaceWinner} raceWinner={raceWinner} />}
       <div className="flex justify-around mt-[2%]">
         <Pagination pageNumber={pageNumber} setPageNumber={setPageNumber} />
       </div>

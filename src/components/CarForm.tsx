@@ -1,4 +1,4 @@
-import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { ICar } from "../pages/ICar";
 
 interface CarFormProps {
@@ -52,7 +52,7 @@ export function CarForm({ car, updateCar, setUpdateFlag }: CarFormProps) {
       });
 
       if (!resp.ok) throw resp.statusText;
-      const data = await resp.json();
+       await resp.json();
       setUpdateFlag(true);
     } catch (e) {
       console.error(e);
