@@ -42,30 +42,33 @@ export function Winners() {
     </svg>
   );
 
-  const getWinners = useCallback(async (limit: number = 10) =>{
-    const pageNum = queryParams.get("_page") ? queryParams.get("_page") : "1";
-    const sort = queryParams.get("_sort") ? `&_sort=${queryParams.get("_sort")}` : ''
-    const order = queryParams.get("_order") ? `&_order=${queryParams.get("_order")}` : ''
-    const resp = await fetch(`http://localhost:3000/winners?_page=${pageNum}&_limit=${limit}${sort}${order}`);
-    const winnersData = await resp.json();
+  const getWinners = useCallback(
+    async (limit: number = 10) => {
+      const pageNum = queryParams.get("_page") ? queryParams.get("_page") : "1";
+      const sort = queryParams.get("_sort") ? `&_sort=${queryParams.get("_sort")}` : "";
+      const order = queryParams.get("_order") ? `&_order=${queryParams.get("_order")}` : "";
+      const resp = await fetch(`${process.env.REACT_APP_URL}/winners?_page=${pageNum}&_limit=${limit}${sort}${order}`);
+      const winnersData = await resp.json();
 
-    const winnerPromises = winnersData.map(async (elem: Winner) => {
-      const carProps = await getCarNameAndColor(elem.id);
-      return {
-        id: elem.id,
-        name: carProps[1],
-        color: carProps[2],
-        wins: elem.wins,
-        time: elem.time,
-      };
-    });
+      const winnerPromises = winnersData.map(async (elem: Winner) => {
+        const carProps = await getCarNameAndColor(elem.id);
+        return {
+          id: elem.id,
+          name: carProps[1],
+          color: carProps[2],
+          wins: elem.wins,
+          time: elem.time,
+        };
+      });
 
-    const winnerDetails = await Promise.all(winnerPromises);
-    setWinners(winnerDetails);
-  }, [queryParams])
+      const winnerDetails = await Promise.all(winnerPromises);
+      setWinners(winnerDetails);
+    },
+    [queryParams]
+  );
 
   async function getCarNameAndColor(id: number) {
-    const cars = await fetch(`http://localhost:3000/garage/${id}`);
+    const cars = await fetch(`${process.env.REACT_APP_URL}/garage/${id}`);
     const carsData = await cars.json();
     return [carsData.id, carsData.name, carsData.color];
   }
@@ -184,7 +187,11 @@ export function Winners() {
                     if (typeof value === "string" && value.startsWith("#")) {
                       return <td key={key + "-" + trEl.id}>{getColoredCar(value)}</td>;
                     }
-                    return <td className="px-10" key={key}>{value}</td>;
+                    return (
+                      <td className="px-10" key={key}>
+                        {value}
+                      </td>
+                    );
                   })}
                 </tr>
               );

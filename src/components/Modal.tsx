@@ -27,19 +27,26 @@ export default function Modal({ raceWinner, setRaceWinner, setRaceResults }: Rac
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
-                stroke-width="1.5"
+                strokeWidth="1.5"
                 stroke="currentColor"
                 className="w-8 h-8 text-gray-300"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
         </div>
-        <div>
-          <p className="text-white">Car: {raceWinner?.carName}</p>
-          <p className="text-white">Time: {raceWinner?.time} ms</p>
-        </div>
+        {raceWinner?.time !== undefined && raceWinner.time > 0 && (
+          <div>
+            <p className="text-white">Car: {raceWinner?.carName}</p>
+            <p className="text-white">Time: {raceWinner?.time} ms</p>
+          </div>
+        )}
+        {raceWinner?.time !== undefined && raceWinner.time < 0 && (
+          <div className="text-center font-bold mt-3">
+            <p className="text-white">No Winners! All cars are broken.</p>
+          </div>
+        )}
       </div>
     </>
   );

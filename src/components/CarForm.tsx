@@ -15,7 +15,6 @@ export function CarForm({ car, updateCar, setUpdateFlag }: CarFormProps) {
   const [color, setColor] = useState(car && car.color ? car.color : "#FF0000");
   const [error, setError] = useState("");
 
-
   async function submitForm(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     let method = "";
@@ -28,7 +27,7 @@ export function CarForm({ car, updateCar, setUpdateFlag }: CarFormProps) {
     }
     if (id) {
       method = "PUT";
-      url = `http://localhost:3000/garage/${id}`;
+      url = `${process.env.REACT_APP_URL}/garage/${id}`;
       body = {
         id,
         name,
@@ -36,7 +35,7 @@ export function CarForm({ car, updateCar, setUpdateFlag }: CarFormProps) {
       };
     } else {
       method = "POST";
-      url = `http://localhost:3000/garage`;
+      url = `${process.env.REACT_APP_URL}/garage`;
       body = {
         name,
         color,
@@ -52,14 +51,14 @@ export function CarForm({ car, updateCar, setUpdateFlag }: CarFormProps) {
       });
 
       if (!resp.ok) throw resp.statusText;
-       await resp.json();
+      await resp.json();
       setUpdateFlag(true);
     } catch (e) {
       console.error(e);
     }
   }
 
-  function setProps(){
+  function setProps() {
     setName(nameInputRef.current!.value);
     setColor(colorInputRef.current!.value);
   }
@@ -67,7 +66,6 @@ export function CarForm({ car, updateCar, setUpdateFlag }: CarFormProps) {
   useEffect(() => {
     setId(car && car.id ? car.id : 0);
   }, [car]);
-
 
   return (
     <form className="flex gap-3 w-[50%] justify-center" onSubmit={(e) => submitForm(e)}>
@@ -77,11 +75,7 @@ export function CarForm({ car, updateCar, setUpdateFlag }: CarFormProps) {
         className="w-[30%] rounded-sm text-gray-600 p-2 h-7 border-none outline-0"
         type="text"
       />
-      <input
-        ref={colorInputRef}
-        className="w-[6%] text-gray-400 h-7 border-none outline-0"
-        type="color"
-      />
+      <input ref={colorInputRef} className="w-[6%] text-gray-400 h-7 border-none outline-0" type="color" />
       <button
         type="submit"
         onClick={setProps}

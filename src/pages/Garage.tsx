@@ -63,7 +63,7 @@ export function Garage() {
   }
 
   async function setWinner(winner: RaceResult) {
-    const winnerResp = await fetch(`http://localhost:3000/winners/${winner.id}`);
+    const winnerResp = await fetch(`${process.env.REACT_APP_URL}/winners/${winner.id}`);
     const winnerData = await winnerResp.json();
 
     try {
@@ -73,7 +73,7 @@ export function Garage() {
           wins: 1,
           time: winner.time,
         });
-        await fetch(`http://localhost:3000/winners`, {
+        await fetch(`${process.env.REACT_APP_URL}/winners`, {
           method: "POST",
           headers: {
             "Content-type": "application/json; charset=UTF-8",
@@ -83,7 +83,7 @@ export function Garage() {
       } else {
         const winsCount = winnerData.wins + 1;
         const winTime = winner.time < winnerData.time ? winner.time : winnerData.time;
-        await fetch(`http://localhost:3000/winners/${winner.id}`, {
+        await fetch(`${process.env.REACT_APP_URL}/winners/${winner.id}`, {
           method: "PUT",
           body: JSON.stringify({
             wins: winsCount,
@@ -100,14 +100,18 @@ export function Garage() {
   }
 
   useEffect(() => {
-    fetchData("http://localhost:3000/garage", Number(pageNumber.get("_page")));
+    fetchData(`${process.env.REACT_APP_URL}/garage`, Number(pageNumber.get("_page")));
   }, [updateFlag, pageNumber]);
 
   useEffect(() => {
     let smallestTimeResult: RaceResult = raceResults[0];
     if (cars.length === raceResults.length) {
-      raceResults.forEach((element) => {
-        if (element.time < smallestTimeResult.time) {
+      const completedRaces = raceResults.filter((elem) => elem.time > 0);
+
+      completedRaces.forEach((element) => {
+        if (smallestTimeResult.time < 0) {
+          smallestTimeResult = element;
+        } else if (element.time < smallestTimeResult.time) {
           smallestTimeResult = element;
         }
       });

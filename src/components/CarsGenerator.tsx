@@ -7,7 +7,7 @@ interface Car {
   color: string;
 }
 
-export default function CarsGenerator({setUpdateFlag }: CarProps) {
+export default function CarsGenerator({ setUpdateFlag }: CarProps) {
   const brandOptions: string[] = [
     "Tesla",
     "Ford",
@@ -70,7 +70,7 @@ export default function CarsGenerator({setUpdateFlag }: CarProps) {
           color: car.color,
         };
 
-        await fetch(`http://localhost:3000/garage`, {
+        await fetch(`${process.env.REACT_APP_URL}/garage`, {
           method: method,
           body: JSON.stringify(body),
           headers: {
@@ -79,8 +79,8 @@ export default function CarsGenerator({setUpdateFlag }: CarProps) {
         });
       });
       setUpdateFlag(true);
-    } catch(e) {
-        console.log(e)
+    } catch (e) {
+      console.log(e);
     }
   }
 

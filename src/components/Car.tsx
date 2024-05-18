@@ -1,41 +1,60 @@
 import { useCallback, useEffect, useState } from "react";
 import { CarProps } from "../pages/Garage";
 
-export function Car({ addResult, raceResults, setRaceResults, setUpdateFlag, setRaceFlag, setCar, raceFlag, data }: CarProps) {
+export function Car({
+  addResult,
+  raceResults,
+  setRaceResults,
+  setUpdateFlag,
+  setRaceFlag,
+  setCar,
+  raceFlag,
+  data,
+}: CarProps) {
   const [left, setLeft] = useState(0);
   const [duration, setDuration] = useState(0);
 
   const moveCar = useCallback(async () => {
     if (raceFlag < 0 || raceFlag === data.id) {
-      let status = "started";
+      let url = new URL("engine", process.env.REACT_APP_URL);
+      url.searchParams.append("id", data.id.toString());
+      url.searchParams.append("status", "started");
       const requestParams = {
         method: "PATCH",
-        url: `http://localhost:3000/engine?id=${data.id}&status=${status}`,
+        url: url.toString(),
         headers: {
           "Content-type": "application/json; charset=UTF-8",
         },
       };
 
       try {
-        const startEngineResp = await fetch(requestParams.url, requestParams);
+        const startEngineResp = await fetch(url.toString(), requestParams);
         if (!startEngineResp.ok) throw startEngineResp.statusText;
         let respObj = await startEngineResp.json();
 
         let calculatedDuration = respObj.velocity * 40;
-        setDuration(calculatedDuration);
-        if (raceFlag < 0 || raceFlag === data.id) {
+
+        url.searchParams.set("status", "drive");
+        requestParams.url = url.toString();
+
+        const driveModeResp = await fetch(url.toString(), requestParams);
+        if (driveModeResp.ok) {
           if (raceFlag < 0) {
+            setDuration(calculatedDuration);
             setTimeout(() => {
               addResult({ id: data.id, time: calculatedDuration });
             }, calculatedDuration);
           }
-          status = "drive";
-          const driveModeResp = await fetch(`"http://localhost:3000/engine?id=${data.id}&status=${status}`);
-          if (driveModeResp.ok) {
-            setLeft(91);
-          } else if (driveModeResp.status === 500) {
-            setLeft(Math.floor(Math.random() * (80 - 10)) + 10);
+          setLeft(91);
+        } else if (driveModeResp.status === 500) {
+          if (raceFlag < 0) {
+            calculatedDuration /= Math.floor(Math.random() * (5 - 1)) + 1;
+            setDuration(calculatedDuration);
+            setTimeout(() => {
+              addResult({ id: data.id, time: -1 });
+            }, calculatedDuration);
           }
+          setLeft(Math.floor(Math.random() * (80 - 10)) + 10);
         }
       } catch (e) {
         console.error(e);
@@ -44,24 +63,28 @@ export function Car({ addResult, raceResults, setRaceResults, setUpdateFlag, set
     if (raceFlag === 0) {
       setLeft(0);
     }
-  }, [addResult, data.id, raceFlag])
+  }, [addResult, data.id, raceFlag]);
 
-  async function removeCar(id: number){
-     const resp = await fetch(`http://localhost:3000/garage/${id}`, {
-      method: "DELETE"
-    })
-    if (resp.ok) setUpdateFlag(true)
+  async function removeCar(id: number) {
+    const resp = await fetch(`${process.env.REACT_APP_URL}/garage/${id}`, {
+      method: "DELETE",
+    });
+    if (resp.ok) setUpdateFlag(true);
   }
 
   useEffect(() => {
     moveCar();
-  }, [raceFlag, moveCar]);
+  }, [raceFlag]);
 
   return (
     <div className={"h-10 w-screen flex"}>
       <div className="flex flex-col gap-2 justify-center  pt-5 ">
-        <button className="bg-blue-400 rounded-md text-xs px-2 mx-1" onClick={() => setCar(data)}>Select</button>
-        <button className="bg-orange-400 rounded-md text-xs px-2v mx-1" onClick={() => removeCar(data.id)}>Remove</button>
+        <button className="bg-blue-400 rounded-md text-xs px-2 mx-1" onClick={() => setCar(data)}>
+          Select
+        </button>
+        <button className="bg-orange-400 rounded-md text-xs px-2v mx-1" onClick={() => removeCar(data.id)}>
+          Remove
+        </button>
       </div>
       <div className="flex flex-col gap-2 pt-2">
         <button
