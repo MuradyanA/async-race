@@ -8,6 +8,7 @@ import { EngineManagement } from "../components/EngineManagement";
 import Modal from "../components/Modal";
 import Pagination from "../components/Pagination";
 import CarsGenerator from "../components/CarsGenerator";
+import { CarContext } from "../Contexts/CarContext";
 
 export interface RaceResult {
   id: number;
@@ -124,58 +125,60 @@ export function Garage() {
   }, [raceResults, cars]);
 
   return (
-    <div>
-      <Nav />
+    <CarContext.Provider value={car}>
       <div>
-        <CarManagement car={car} setCar={setCar} setUpdateFlag={setUpdateFlag} />
-        <p className="ml-[1%] rounded-md text-white w-fit bg-gray-600 opacity-90 p-2 text-xl">
-          Total Cars Count: {totalCarsNumber}
-        </p>
-        <div className="flex flex-rows items-center">
-          <EngineManagement setRaceFlag={setRaceFlag} />
-          <CarsGenerator setUpdateFlag={setUpdateFlag} />
+        <Nav />
+        <div>
+          <CarManagement setUpdateFlag={setUpdateFlag} />
+          <p className="ml-[1%] rounded-md text-white w-fit bg-gray-600 opacity-90 p-2 text-xl">
+            Total Cars Count: {totalCarsNumber}
+          </p>
+          <div className="flex flex-rows items-center">
+            <EngineManagement setRaceFlag={setRaceFlag} />
+            <CarsGenerator setUpdateFlag={setUpdateFlag} />
+          </div>
         </div>
-      </div>
-      <div className="absolute flex flex-col items-start justify-start gap-2">
-        {cars.map((el) => (
-          <Car
-            setCar={setCar}
-            setRaceFlag={setRaceFlag}
-            addResult={addResult}
-            setRaceResults={setRaceResults}
-            raceResults={raceResults}
-            raceFlag={raceFlag}
-            key={el.id}
-            data={el}
-            setUpdateFlag={setUpdateFlag}
-          />
-        ))}
-      </div>
-      <div className="w-full bg-gray-700 flex">
-        <div className="bg-gray-700 flex flex-col">
-          <div className={"w-40 h-[" + cars.length * 50 + "px]"}></div>
-        </div>
-        <div className="bg-blue-400 text-sm [writing-mode:vertical-lr] text-center w-fit">
-          <div className="font-bold">START</div>
-        </div>
-        <div className="flex w-[85%] flex-col">
+        <div className="absolute flex flex-col items-start justify-start gap-2">
           {cars.map((el) => (
-            <div
+            <Car
+              setCar={setCar}
+              setRaceFlag={setRaceFlag}
+              addResult={addResult}
+              setRaceResults={setRaceResults}
+              raceResults={raceResults}
+              raceFlag={raceFlag}
               key={el.id}
-              className="border-t-2 border-b-2 border-dashed border-gray-300 flex items-center justify-center h-full"
-            >
-              <p className="text-xl text-white opacity-40 tracking-widest">{el.name}</p>
-            </div>
+              data={el}
+              setUpdateFlag={setUpdateFlag}
+            />
           ))}
         </div>
-        <div className="bg-green-500 w-fit text-sm [writing-mode:vertical-lr] text-center">
-          <div className="font-bold">FINISH</div>
+        <div className="w-full bg-gray-700 flex">
+          <div className="bg-gray-700 flex flex-col">
+            <div className={"w-40 h-[" + cars.length * 50 + "px]"}></div>
+          </div>
+          <div className="bg-blue-400 text-sm [writing-mode:vertical-lr] text-center w-fit">
+            <div className="font-bold">START</div>
+          </div>
+          <div className="flex w-[85%] flex-col">
+            {cars.map((el) => (
+              <div
+                key={el.id}
+                className="border-t-2 border-b-2 border-dashed border-gray-300 flex items-center justify-center h-full"
+              >
+                <p className="text-xl text-white opacity-40 tracking-widest">{el.name}</p>
+              </div>
+            ))}
+          </div>
+          <div className="bg-green-500 w-fit text-sm [writing-mode:vertical-lr] text-center">
+            <div className="font-bold">FINISH</div>
+          </div>
+        </div>
+        {raceWinner && <Modal setRaceResults={setRaceResults} setRaceWinner={setRaceWinner} raceWinner={raceWinner} />}
+        <div className="flex justify-around mt-[2%]">
+          <Pagination pageNumber={pageNumber} setPageNumber={setPageNumber} />
         </div>
       </div>
-      {raceWinner && <Modal setRaceResults={setRaceResults} setRaceWinner={setRaceWinner} raceWinner={raceWinner} />}
-      <div className="flex justify-around mt-[2%]">
-        <Pagination pageNumber={pageNumber} setPageNumber={setPageNumber} />
-      </div>
-    </div>
+    </CarContext.Provider>
   );
 }

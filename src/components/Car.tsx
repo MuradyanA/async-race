@@ -39,7 +39,7 @@ export function Car({
 
         const driveModeResp = await fetch(url.toString(), requestParams);
         if (driveModeResp.ok) {
-          if (raceFlag < 0) {
+          if (raceFlag < 0 || raceFlag > 0) {
             setDuration(calculatedDuration);
             setTimeout(() => {
               addResult({ id: data.id, time: calculatedDuration });

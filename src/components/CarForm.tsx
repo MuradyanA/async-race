@@ -1,20 +1,18 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
-import { ICar } from "../pages/ICar";
+import { useCarContext } from "../Contexts/CarContext";
 
 interface CarFormProps {
-  car: ICar | undefined;
-  updateCar: (newUCar: ICar) => void;
   setUpdateFlag: (updateFlag: boolean) => void;
 }
 
-export function CarForm({ car, updateCar, setUpdateFlag }: CarFormProps) {
-  const [id, setId] = useState(car && car.id ? car.id : 0);
+export function CarForm({ setUpdateFlag }: CarFormProps) {
+  const car = useCarContext();
+  const [id, setId] = useState(car && car.id !== 0 ? car.id : 0);
   const nameInputRef = useRef<HTMLInputElement>(null);
   const colorInputRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState(car && car.name ? car.name : "");
   const [color, setColor] = useState(car && car.color ? car.color : "#FF0000");
   const [error, setError] = useState("");
-
   async function submitForm(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     let method = "";
@@ -64,7 +62,7 @@ export function CarForm({ car, updateCar, setUpdateFlag }: CarFormProps) {
   }
 
   useEffect(() => {
-    setId(car && car.id ? car.id : 0);
+    setId(car && car.id !== 0 ? car.id : 0);
   }, [car]);
 
   return (
@@ -81,7 +79,7 @@ export function CarForm({ car, updateCar, setUpdateFlag }: CarFormProps) {
         onClick={setProps}
         className={`${car === undefined ? "bg-green-600 " : "bg-blue-600 "} + "rounded-sm px-2 h-7"`}
       >
-        {car === undefined ? "Create" : "Update"}
+        {car.id === 0 ? "Create" : "Update"}
       </button>
     </form>
   );
